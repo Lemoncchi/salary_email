@@ -238,6 +238,11 @@ class MainWin(tk.Tk):
             return
         try:
             password = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name == 'password').first()
+            if not password:
+                tk.messagebox.showerror(
+                    title="错误", message="请设置 SMTP 邮箱账号密码！"
+                )
+                return
             self.__password.set(base64.decodebytes(password.field_value).decode('utf-8'))
         except Exception as e:
             tk.messagebox.showerror(title='错误', message='数据库错误！\n{}'.format(e))
