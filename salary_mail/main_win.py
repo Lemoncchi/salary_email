@@ -23,10 +23,11 @@ class MainWin(tk.Tk):
     def __init__(self):
         super(MainWin, self).__init__()
         self.title('Salary E-mail Main')
-        x = (self.winfo_screenwidth() // 2) - 300
-        y = (self.winfo_screenheight() // 2) - 300
-        self.geometry('600x600+{}+{}'.format(x, y))
-        self.resizable(width=False, height=False)  # 禁制拉伸大小
+
+        # x = (self.winfo_screenwidth() // 2) - 300
+        # y = (self.winfo_screenheight() // 2) - 300
+        # self.geometry('600x600+{}+{}'.format(x, y))
+        # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.label_width = 55  # 标签长度
 
         self.db = set_db()
@@ -142,18 +143,26 @@ class MainWin(tk.Tk):
         # 进度条
         row8 = tk.Frame(self, padx=20, pady=1)
         row8.pack(fill='x', padx=1, pady=5)
-        self.progressbar = ttk.Progressbar(row8, orient='horizontal', length=545, mode="determinate", variable=self.P_count)
-        self.progressbar.pack(side=tk.LEFT)
+        self.update_idletasks()  # 更新窗口尺寸
+        window_width = self.winfo_width()  # 获取窗口宽度
 
-
+        self.progressbar = ttk.Progressbar(
+            row8,
+            orient="horizontal",
+            length=window_width - 40,  # 根据窗口宽度设置进度条长度
+            mode="determinate",
+            variable=self.P_count,
+        )
+        self.progressbar.pack(side=tk.TOP, pady=10)
+        self.progressbar.pack_configure(anchor="center")
 
         # 发送结果显示框
-        self.result_box = tk.Frame(self, borderwidth=1, padx=20, pady=0)
+        self.result_box = tk.Frame(self, borderwidth=1, padx=20, pady=10)
         self.result_box.pack(fill='x',padx=1, pady=5)
         self.result_list = ttk.Treeview(self.result_box, height=10, show="headings")
         self.result_list['columns'] = ('姓名', "邮箱", '发送结果')
         self.result_list.column('姓名', width=120, anchor=tk.CENTER)  # 表示列,不显示
-        self.result_list.column("邮箱", width=300, anchor=tk.CENTER)
+        self.result_list.column("邮箱", width=window_width - 240, anchor=tk.CENTER)
         self.result_list.column('发送结果', width=120, anchor=tk.CENTER)
         self.result_list.heading('姓名', text="姓名")
         self.result_list.heading("邮箱", text="邮箱")

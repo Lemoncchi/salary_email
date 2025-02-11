@@ -16,7 +16,7 @@ class AccountPasswordWin(tk.Toplevel):
         cx, cy = parent.get_center()
         self.geometry('300x120+{}+{}'.format(cx - 150, cy - 60))
         self.attributes("-topmost", 1)  # 保持在前
-        self.resizable(width=False, height=False)  # 禁制拉伸大小
+        # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
         self.db = parent.db
         self.setupUI()
