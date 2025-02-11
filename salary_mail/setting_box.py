@@ -95,7 +95,7 @@ class SMTPPortWin(tk.Toplevel):
         cx, cy = parent.get_center()
         self.geometry('300x120+{}+{}'.format(cx - 150, cy - 60))
         self.attributes("-topmost", 1)  # 保持在前
-        self.resizable(width=False, height=False)  # 禁制拉伸大小
+        # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
         self.db = parent.db
         self.setupUI()
@@ -175,7 +175,7 @@ class InfoWin(tk.Toplevel):
         cx, cy = parent.get_center()
         self.geometry('500x120+{}+{}'.format(cx - 250, cy - 60))
         self.attributes("-topmost", 1)  # 保持在前
-        self.resizable(width=False, height=False)  # 禁制拉伸大小
+        # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.setupUI()
 
     def setupUI(self):
@@ -249,7 +249,7 @@ class SysSettingWin(tk.Toplevel):
         cx, cy = parent.get_center()
         self.geometry('300x120+{}+{}'.format(cx - 150, cy - 60))
         self.attributes("-topmost", 1)  # 保持在前
-        self.resizable(width=False, height=False)  # 禁制拉伸大小
+        # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
         self.db = parent.db
         self.setupUI()
@@ -287,8 +287,8 @@ class SysSettingWin(tk.Toplevel):
         try:
             int(count)
         except Exception as e:
-                tk.messagebox.showinfo(title='输入错误', message='请输入正确的数量!', parent=self)
-                return
+            tk.messagebox.showinfo(title='输入错误', message='请输入正确的数量!', parent=self)
+            return
         else:
             thread_count.field_value = str(abs(int(count)))
             self.db.session.add(thread_count)
