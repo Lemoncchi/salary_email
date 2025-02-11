@@ -11,7 +11,7 @@ class Database(object):
 
     def __init__(self, config=None):
         self.__config = config
-        self.__engine= self.__create_engine
+        self.__engine = self.__create_engine
         self.__session_factory = sessionmaker(bind=self.__engine)
         self.__base_model = declarative_base()
         self.__db_session = scoped_session(self.__session_factory)
@@ -39,10 +39,12 @@ class Database(object):
     def drop_all(self):
         self.Model.metadata.drop_all(self.__engine)
 
+
 BaseModel = declarative_base()
 
+
 class SalaryEmail(BaseModel):
-    __tablename__ = 'salary_email'
+    __tablename__ = "salary_email"
 
     id = Column(Integer, primary_key=True)
     field_name = Column(String(64), unique=True)
@@ -52,17 +54,15 @@ class SalaryEmail(BaseModel):
 
 def set_db():
     DB_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    DB_PATH = os.path.join(DB_ROOT, 'salary.db')
+    DB_PATH = os.path.join(DB_ROOT, "salary.db")
 
-    config = {
-        "bind": 'sqlite:///{}'.format(DB_PATH)
-    }
+    config = {"bind": "sqlite:///{}".format(DB_PATH)}
 
     db = Database(config=config)
     BaseModel.metadata.create_all(db.engine)
     return db
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     db = set_db()
     BaseModel.metadata.create_all(db.engine)

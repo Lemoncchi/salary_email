@@ -14,15 +14,16 @@ import tkinter.messagebox
 import tkinter.filedialog
 
 from smtplib import SMTP_SSL, SMTP
-from decimal import (Decimal)
+from decimal import Decimal
 
 DEFAULT_COUNT = 4
+
 
 class MainWin(tk.Tk):
 
     def __init__(self):
         super(MainWin, self).__init__()
-        self.title('Salary E-mail Main')
+        self.title("Salary E-mail Main")
 
         # x = (self.winfo_screenwidth() // 2) - 300
         # y = (self.winfo_screenheight() // 2) - 300
@@ -31,9 +32,9 @@ class MainWin(tk.Tk):
         self.label_width = 55  # 标签长度
 
         self.db = set_db()
-        self.subject = tk.StringVar() # 邮件标题
+        self.subject = tk.StringVar()  # 邮件标题
         self.salary_file_path = tk.StringVar()
-        self.send_date = tk.StringVar() # 发件时间
+        self.send_date = tk.StringVar()  # 发件时间
         self.sender_text = tk.StringVar()
         self.sender_name_text = tk.StringVar()
         self.sign_text = tk.StringVar()
@@ -46,10 +47,10 @@ class MainWin(tk.Tk):
         self.lock = threading.Lock()  # 计数增量线程锁
         self.gen_lock = threading.Lock()  # 行数据生成器线程锁
 
-        self.thread_count = tk.IntVar() # 发送邮件进程数
+        self.thread_count = tk.IntVar()  # 发送邮件进程数
 
         self.show_percent = tk.StringVar()  # 显示百分百
-        self.show_percent.set('完成百分比：0%')
+        self.show_percent.set("完成百分比：0%")
 
         self.show_percent_th = threading.Thread(target=self.show_percent_run)
 
@@ -58,7 +59,7 @@ class MainWin(tk.Tk):
         self.set_default_info()
 
     def setupUI(self):
-        '''主界面'''
+        """主界面"""
 
         # 设置菜单栏
         menubar = self.set_menubar()
@@ -78,12 +79,12 @@ class MainWin(tk.Tk):
         self.wait_window(info_box)
 
     def set_menubar(self):
-        '''菜单栏'''
+        """菜单栏"""
         menubar = tk.Menu(self)
         filemenu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="文件", menu=filemenu)
 
-        filemenu.add_command(label='退出', command=self.quit)
+        filemenu.add_command(label="退出", command=self.quit)
         settingmenu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="设置", menu=settingmenu)
         settingmenu.add_command(label="账号/密码", command=self.show_account_box)
@@ -93,56 +94,79 @@ class MainWin(tk.Tk):
         return menubar
 
     def show_sys_setting_box(self):
-        '''显示系统设置菜单'''
+        """显示系统设置菜单"""
         sys_setting_box = SysSettingWin(parent=self)
         self.wait_window(sys_setting_box)
 
     def show_base_info(self):
-        '''显示基本信息'''
+        """显示基本信息"""
 
         row1 = tk.Frame(self)
-        row1.pack(fill='x', padx=1, pady=5)
+        row1.pack(fill="x", padx=1, pady=5)
         tk.Label(row1, text="发件邮箱：", width=15).pack(side=tk.LEFT)
-        tk.Label(row1, textvariable=self.sender_text, width=self.label_width).pack(side=tk.LEFT)
+        tk.Label(row1, textvariable=self.sender_text, width=self.label_width).pack(
+            side=tk.LEFT
+        )
         row2 = tk.Frame(self)
-        row2.pack(fill='x', padx=1, pady=5)
+        row2.pack(fill="x", padx=1, pady=5)
         tk.Label(row2, text="发件人：", width=15).pack(side=tk.LEFT)
-        tk.Label(row2, textvariable=self.sender_name_text, width=self.label_width).pack(side=tk.LEFT)
+        tk.Label(row2, textvariable=self.sender_name_text, width=self.label_width).pack(
+            side=tk.LEFT
+        )
 
         row3 = tk.Frame(self)
-        row3.pack(fill='x', padx=1, pady=5)
+        row3.pack(fill="x", padx=1, pady=5)
         tk.Label(row3, text="邮件标题：", width=15).pack(side=tk.LEFT)
-        tk.Entry(row3, textvariable=self.subject, width=self.label_width, justify=tk.CENTER).pack(side=tk.LEFT)
+        tk.Entry(
+            row3, textvariable=self.subject, width=self.label_width, justify=tk.CENTER
+        ).pack(side=tk.LEFT)
 
         row5 = tk.Frame(self)
-        row5.pack(fill='x', padx=1, pady=5)
+        row5.pack(fill="x", padx=1, pady=5)
         tk.Label(row5, text="邮件签名/落款：", width=15).pack(side=tk.LEFT)
-        tk.Label(row5, textvariable=self.sign_text, width=self.label_width).pack(side=tk.LEFT)
+        tk.Label(row5, textvariable=self.sign_text, width=self.label_width).pack(
+            side=tk.LEFT
+        )
 
         row6 = tk.Frame(self)
-        row6.pack(fill='x', padx=1, pady=5)
+        row6.pack(fill="x", padx=1, pady=5)
         tk.Label(row6, text="邮件日期：", width=15).pack(side=tk.LEFT)
-        tk.Entry(row6, textvariable=self.send_date, width=self.label_width, justify=tk.CENTER).pack(side=tk.LEFT)
+        tk.Entry(
+            row6, textvariable=self.send_date, width=self.label_width, justify=tk.CENTER
+        ).pack(side=tk.LEFT)
 
         row7 = tk.Frame(self)
-        row7.pack(fill='x', padx=1, pady=5)
+        row7.pack(fill="x", padx=1, pady=5)
         tk.Label(row7, text="SMTP服务器：", width=15).pack(side=tk.LEFT)
-        tk.Label(row7, textvariable=self.smtp_text, width=30, justify=tk.CENTER).pack(side=tk.LEFT)
+        tk.Label(row7, textvariable=self.smtp_text, width=30, justify=tk.CENTER).pack(
+            side=tk.LEFT
+        )
         tk.Label(row7, text="PORT：", width=10).pack(side=tk.LEFT)
-        tk.Label(row7, textvariable=self.port_text, width=10, justify=tk.CENTER).pack(side=tk.LEFT)
+        tk.Label(row7, textvariable=self.port_text, width=10, justify=tk.CENTER).pack(
+            side=tk.LEFT
+        )
 
         row4 = tk.Frame(self)
-        row4.pack(fill='x', padx=1, pady=5)
+        row4.pack(fill="x", padx=1, pady=5)
         tk.Label(row4, text="工资条文件：", width=15).pack(side=tk.LEFT)
-        tk.Entry(row4, textvariable=self.salary_file_path, width=self.label_width, justify=tk.CENTER).pack(side=tk.LEFT)
-        tk.Button(row4, text='Open', command=self.get_salary_file_path, width=5).pack(side=tk.LEFT)
+        tk.Entry(
+            row4,
+            textvariable=self.salary_file_path,
+            width=self.label_width,
+            justify=tk.CENTER,
+        ).pack(side=tk.LEFT)
+        tk.Button(row4, text="Open", command=self.get_salary_file_path, width=5).pack(
+            side=tk.LEFT
+        )
 
-        tk.Button(self, command=self.send_email, text='发送', width=20).pack(padx=1, pady=5)
-        tk.Label(self, textvariable=self.show_percent ).pack(padx=1, pady=5)
+        tk.Button(self, command=self.send_email, text="发送", width=20).pack(
+            padx=1, pady=5
+        )
+        tk.Label(self, textvariable=self.show_percent).pack(padx=1, pady=5)
 
         # 进度条
         row8 = tk.Frame(self, padx=20, pady=1)
-        row8.pack(fill='x', padx=1, pady=5)
+        row8.pack(fill="x", padx=1, pady=5)
         self.update_idletasks()  # 更新窗口尺寸
         window_width = self.winfo_width()  # 获取窗口宽度
 
@@ -158,22 +182,24 @@ class MainWin(tk.Tk):
 
         # 发送结果显示框
         self.result_box = tk.Frame(self, borderwidth=1, padx=20, pady=10)
-        self.result_box.pack(fill='x',padx=1, pady=5)
+        self.result_box.pack(fill="x", padx=1, pady=5)
         self.result_list = ttk.Treeview(self.result_box, height=10, show="headings")
-        self.result_list['columns'] = ('姓名', "邮箱", '发送结果')
-        self.result_list.column('姓名', width=120, anchor=tk.CENTER)  # 表示列,不显示
+        self.result_list["columns"] = ("姓名", "邮箱", "发送结果")
+        self.result_list.column("姓名", width=120, anchor=tk.CENTER)  # 表示列,不显示
         self.result_list.column("邮箱", width=window_width - 240, anchor=tk.CENTER)
-        self.result_list.column('发送结果', width=120, anchor=tk.CENTER)
-        self.result_list.heading('姓名', text="姓名")
+        self.result_list.column("发送结果", width=120, anchor=tk.CENTER)
+        self.result_list.heading("姓名", text="姓名")
         self.result_list.heading("邮箱", text="邮箱")
-        self.result_list.heading('发送结果', text='发送结果')
+        self.result_list.heading("发送结果", text="发送结果")
         self.result_list.grid(row=0, column=0, sticky=tk.NSEW)
-        vbar = ttk.Scrollbar(self.result_box, orient=tk.VERTICAL, command=self.result_list.yview)
+        vbar = ttk.Scrollbar(
+            self.result_box, orient=tk.VERTICAL, command=self.result_list.yview
+        )
         self.result_list.configure(yscrollcommand=vbar.set)
         vbar.grid(row=0, column=1, sticky=tk.NS)
 
     def count_done_row(self):
-        '''计算完成的任务数'''
+        """计算完成的任务数"""
         with self.lock:
             self.done_count += 1
             self.P_count.set(self.done_count)
@@ -181,38 +207,64 @@ class MainWin(tk.Tk):
     def show_percent_run(self):
         total_count = self.excel_file.nrows
         current_count = self.done_count
-        percent = "%0.1f" % (current_count/float(total_count) * 100)
+        percent = "%0.1f" % (current_count / float(total_count) * 100)
         self.show_percent.set("完成百分百：{}%".format(percent))
 
     def get_salary_file_path(self):
-        '''获取工资条文件路径'''
-        path = tk.filedialog.askopenfilename(title='选择文件', filetypes=[("Excel File", "*.xls *.xlsx")])
+        """获取工资条文件路径"""
+        path = tk.filedialog.askopenfilename(
+            title="选择文件", filetypes=[("Excel File", "*.xls *.xlsx")]
+        )
         self.salary_file_path.set(path)
 
     def set_default_info(self):
-        '''设置默认初始值'''
-        self.subject.set('{}年{}月工资明细'.format(*self._get_year_month()))
+        """设置默认初始值"""
+        self.subject.set("{}年{}月工资明细".format(*self._get_year_month()))
         try:
-            sender = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='sender').first()
+            sender = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "sender")
+                .first()
+            )
             sender_text = sender.field_value if sender else ""
-            sender_name = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='sender_name').first()
+            sender_name = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "sender_name")
+                .first()
+            )
             sender_name_text = sender_name.field_value if sender_name else ""
-            sign = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='sign').first()
+            sign = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "sign")
+                .first()
+            )
             sign_text = sign.field_value if sign else ""
-            smtp = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='smtp_server').first()
+            smtp = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "smtp_server")
+                .first()
+            )
             smtp_text = smtp.field_value if smtp else ""
-            port = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='port').first()
+            port = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "port")
+                .first()
+            )
             port_text = port.field_value if port else ""
-            thread = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name=='thread_count').first()
+            thread = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "thread_count")
+                .first()
+            )
             thread_count = int(thread.field_value) if thread else DEFAULT_COUNT
 
         except Exception as e:
-            tk.messagebox.showerror(title='错误', message='数据库错误！\n{}'.format(e))
-            sender_text = ''
-            sender_name_text = ''
-            sign_text = ''
-            smtp_text = ''
-            port_text = ''
+            tk.messagebox.showerror(title="错误", message="数据库错误！\n{}".format(e))
+            sender_text = ""
+            sender_name_text = ""
+            sign_text = ""
+            smtp_text = ""
+            port_text = ""
             thread_count = DEFAULT_COUNT
         self.sender_text.set(sender_text)
         self.sender_name_text.set(sender_name_text)
@@ -223,29 +275,39 @@ class MainWin(tk.Tk):
         self.thread_count.set(thread_count)
 
     def send_email(self):
-        '''发送邮件'''
+        """发送邮件"""
         try:
             file_name = self.salary_file_path.get()
-            if file_name.rsplit('.', 1)[1].lower() not in ('xlsx', 'xls'):
-                tk.messagebox.showerror(title='文件错误', message='请选择正确的excel文件！')
+            if file_name.rsplit(".", 1)[1].lower() not in ("xlsx", "xls"):
+                tk.messagebox.showerror(
+                    title="文件错误", message="请选择正确的excel文件！"
+                )
                 return
             self.excel_file = ParseExcel(file_name=file_name)
             # 初始化进度条
-            self.progressbar['maximum'] = self.excel_file.nrows
+            self.progressbar["maximum"] = self.excel_file.nrows
             self.P_count.set(0)
         except Exception as e:
-            tk.messagebox.showerror(title='文件错误', message='请选择正确的excel文件！\n{}'.format(e))
+            tk.messagebox.showerror(
+                title="文件错误", message="请选择正确的excel文件！\n{}".format(e)
+            )
             return
         try:
-            password = self.db.session.query(SalaryEmail).filter(SalaryEmail.field_name == 'password').first()
+            password = (
+                self.db.session.query(SalaryEmail)
+                .filter(SalaryEmail.field_name == "password")
+                .first()
+            )
             if not password:
                 tk.messagebox.showerror(
                     title="错误", message="请设置 SMTP 邮箱账号密码！"
                 )
                 return
-            self.__password.set(base64.decodebytes(password.field_value).decode('utf-8'))
+            self.__password.set(
+                base64.decodebytes(password.field_value).decode("utf-8")
+            )
         except Exception as e:
-            tk.messagebox.showerror(title='错误', message='数据库错误！\n{}'.format(e))
+            tk.messagebox.showerror(title="错误", message="数据库错误！\n{}".format(e))
             return
 
         self.done_count = 0  # 重置计数
@@ -253,7 +315,9 @@ class MainWin(tk.Tk):
         thread_count = self.thread_count.get() or DEFAULT_COUNT
         for i in range(thread_count):
             print(i)
-            send_thread = threading.Thread(target=self._send_email, args=(gen, self.gen_lock))  # 子线程发送邮件
+            send_thread = threading.Thread(
+                target=self._send_email, args=(gen, self.gen_lock)
+            )  # 子线程发送邮件
             send_thread.setDaemon(True)
             send_thread.start()
 
@@ -279,7 +343,8 @@ class MainWin(tk.Tk):
         pw = self.winfo_width()
         ph = self.winfo_height()
 
-        return (int(px + pw/2), int(py + ph/2))
+        return (int(px + pw / 2), int(py + ph / 2))
+
 
 class SendEmail(object):
 
@@ -309,11 +374,24 @@ class SendEmail(object):
                 break
             flag = True
             try:
-                self._send_email(smtp=smtp, sender=sender_text, sender_name=sender_name_text, sign=sign_text, date=date, info_row=row)
+                self._send_email(
+                    smtp=smtp,
+                    sender=sender_text,
+                    sender_name=sender_name_text,
+                    sign=sign_text,
+                    date=date,
+                    info_row=row,
+                )
             except Exception as e:
                 try:
-                    self._send_email(smtp=smtp, sender=sender_text, sender_name=sender_name_text, sign=sign_text,
-                                     date=date, info_row=row)
+                    self._send_email(
+                        smtp=smtp,
+                        sender=sender_text,
+                        sender_name=sender_name_text,
+                        sign=sign_text,
+                        date=date,
+                        info_row=row,
+                    )
                 except Exception as e:
                     flag = False
                 else:
@@ -322,18 +400,25 @@ class SendEmail(object):
                 pass
             self.win.count_done_row()
             self.win.show_percent_run()
-            self.win.result_list.insert('', 'end', values=(row[0][1], row[-1][1], "成功！" if flag else "发送失败！！！"))
-
+            self.win.result_list.insert(
+                "",
+                "end",
+                values=(row[0][1], row[-1][1], "成功！" if flag else "发送失败！！！"),
+            )
 
     def _send_email(self, smtp, sender, sender_name, sign, date, info_row):
 
-        msg = self._make_mail_text(sender=sender, sender_name=sender_name, sign=sign, date=date,
-                                   info_row=info_row)
+        msg = self._make_mail_text(
+            sender=sender,
+            sender_name=sender_name,
+            sign=sign,
+            date=date,
+            info_row=info_row,
+        )
         smtp.sendmail(from_addr=sender, to_addrs=[info_row[-1][1]], msg=msg)
 
-
     def _login_smpt(self):
-        '''登陆邮箱'''
+        """登陆邮箱"""
         try:
             sender_text = self.win.sender_text.get()
             smtp_server = self.win.smtp_text.get()
@@ -342,7 +427,7 @@ class SendEmail(object):
             password = self.__password
             port = int(port)
         except Exception as e:
-            tk.messagebox.showerror(title='错误', message='数据库错误！\n{}'.format(e))
+            tk.messagebox.showerror(title="错误", message="数据库错误！\n{}".format(e))
             return
 
         try:
@@ -351,16 +436,19 @@ class SendEmail(object):
             elif port == 465:
                 smtp = SMTP_SSL(host=smtp_server, port=port)
             else:
-                raise ConnectionError('SMTP 端口错误')
+                raise ConnectionError("SMTP 端口错误")
             smtp.login(sender_text, password)
         except Exception as e:
-            tk.messagebox.showerror(title='登陆错误', message='请检查账号信息是否正确！\n{}'.format(e))
+            tk.messagebox.showerror(
+                title="登陆错误", message="请检查账号信息是否正确！\n{}".format(e)
+            )
             raise
 
         return smtp
 
     def _make_mail_text(self, sender, sender_name, sign, date, info_row):
-        mail_text = '''
+        mail_text = (
+            """
             <html>
             <body>
             <style type="text/css">
@@ -374,7 +462,9 @@ class SendEmail(object):
         		<table class="info" border="1">
         		    <caption>%s</caption>
         			<tr>
-        	''' % self.win.subject.get()
+        	"""
+            % self.win.subject.get()
+        )
 
         for h in info_row[:-1]:
             mail_text += "<th>%s</th>" % str(h[0]).strip()
@@ -386,13 +476,13 @@ class SendEmail(object):
             if l == "":
                 l = "0.00"
             try:
-                l = Decimal(l).quantize(Decimal('.01'))
+                l = Decimal(l).quantize(Decimal(".01"))
             except Exception:
                 pass
             l = str(l)
             mail_text += "<td>%s</td>" % l
 
-        mail_text += '''
+        mail_text += """
                     </tr>
                 </table>
                 <div>
@@ -400,20 +490,21 @@ class SendEmail(object):
         			<p>%s</p>
         		</div>
         		</body></html>
-            ''' % (sign, date)
+            """ % (
+            sign,
+            date,
+        )
 
-        msg = MIMEText(mail_text, 'html', 'utf-8')
-        msg['From'] = formataddr([sender_name, sender])
-        msg['To'] = formataddr([info_row[0][1].strip(), info_row[-1][1].strip()])
-        msg['Subject'] = self.win.subject.get()
+        msg = MIMEText(mail_text, "html", "utf-8")
+        msg["From"] = formataddr([sender_name, sender])
+        msg["To"] = formataddr([info_row[0][1].strip(), info_row[-1][1].strip()])
+        msg["Subject"] = self.win.subject.get()
         return msg.as_string()
 
     def run(self):
         self.send_email()
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     win = MainWin()
     win.mainloop()
