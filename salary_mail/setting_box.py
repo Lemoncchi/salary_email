@@ -14,7 +14,8 @@ class AccountPasswordWin(tk.Toplevel):
         super(AccountPasswordWin, self).__init__()
         self.title("账户设置")
         cx, cy = parent.get_center()
-        self.geometry("300x120+{}+{}".format(cx - 150, cy - 60))
+        # print(self.winfo_width(), self.winfo_height())
+        self.geometry(f"+{cx}+{cy}")
         self.attributes("-topmost", 1)  # 保持在前
         # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
@@ -131,7 +132,8 @@ class SMTPPortWin(tk.Toplevel):
         self.title("SMTP设置")
 
         cx, cy = parent.get_center()
-        self.geometry("300x120+{}+{}".format(cx - 150, cy - 60))
+        # self.geometry("300x120+{}+{}".format(cx - 150, cy - 60))
+        self.geometry(f"+{cx}+{cy}")
         self.attributes("-topmost", 1)  # 保持在前
         # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
@@ -242,7 +244,8 @@ class InfoWin(tk.Toplevel):
         self.parent = parent
         self.db = parent.db
         cx, cy = parent.get_center()
-        self.geometry("500x120+{}+{}".format(cx - 250, cy - 60))
+        # self.geometry("500x120+{}+{}".format(cx - 250, cy - 60))
+        self.geometry(f"+{cx}+{cy}")
         self.attributes("-topmost", 1)  # 保持在前
         # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.setupUI()
@@ -344,7 +347,8 @@ class SysSettingWin(tk.Toplevel):
         super(SysSettingWin, self).__init__()
         self.title("系统设置")
         cx, cy = parent.get_center()
-        self.geometry("300x120+{}+{}".format(cx - 150, cy - 60))
+        # self.geometry("300x120+{}+{}".format(cx - 150, cy - 60))
+        self.geometry(f"+{cx}+{cy}")
         self.attributes("-topmost", 1)  # 保持在前
         # self.resizable(width=False, height=False)  # 禁制拉伸大小
         self.parent = parent
